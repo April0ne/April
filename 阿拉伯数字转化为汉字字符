@@ -18,20 +18,20 @@ import java.util.Scanner;
 public class renminbi {
     
     // 定义变量
-    //  新建数组ChineseNumber,存入从零-镹的汉字
-		private static String[] ChineseNumber = {"零","壹","贰","叁","肆","伍","陆","柒","捌","玖","拾"};
+    	//  新建数组ChineseNumber,存入从零-镹的汉字
+	private static String[] ChineseNumber = {"零","壹","贰","叁","肆","伍","陆","柒","捌","玖","拾"};
 
-		//  新建数组CountingUnitInt,存入个十百千万十万百万千万等计数单位
-		private static String[] CountingUnitInt = {"元","拾","佰","仟","万","拾万","佰万","仟万","亿","佰亿","仟亿"};
+	//  新建数组CountingUnitInt,存入个十百千万十万百万千万等计数单位
+	private static String[] CountingUnitInt = {"元","拾","佰","仟","万","拾万","佰万","仟万","亿","佰亿","仟亿"};
 
-		//  新建数组CountingUnitFloat,存入小于1元的小数
-		private static String[] CountingUnitFloat = {"角","分"};
+	//  新建数组CountingUnitFloat,存入小于1元的小数
+	private static String[] CountingUnitFloat = {"角","分"};
 
-		//  定义存储整数对应汉字字符串及计数单位的数组;
-		private static StringBuffer HanZiIntAndUnit = new StringBuffer("");
+	//  定义存储整数对应汉字字符串及计数单位的数组;
+	private static StringBuffer HanZiIntAndUnit = new StringBuffer("");
 
-		//   定义存储小数对应汉字字符串及计数单位的数组;
-		private static StringBuffer HanZiFloatAndUnit = new StringBuffer("");
+	//   定义存储小数对应汉字字符串及计数单位的数组;
+	private static StringBuffer HanZiFloatAndUnit = new StringBuffer("");
 
 	/*
 		* 【方法】：把浮点数分解为整数部分和小数部分字符串的方法
@@ -52,141 +52,136 @@ public class renminbi {
     //【主线程】
     public static void main(String[] args) throws Exception {
     
-		// 1.从键盘输入要转化为汉字读法的金额,存储为字符转
-		Scanner scanner = new Scanner(System.in);
-		System.out.println("请输入要转化为汉字读法的金额数...");
-		double money = scanner.nextDouble();
-	
-		// 调用把浮点数分解为整数部分和小数部分字符串的方法
-		String[] strIntArray =  divide(money);
-		char[] IntArray = strIntArray[0].toCharArray();
+	// 1.从键盘输入要转化为汉字读法的金额,存储为字符转
+	Scanner scanner = new Scanner(System.in);
+	System.out.println("请输入要转化为汉字读法的金额数...");
+	double money = scanner.nextDouble();
+
+	// 调用把浮点数分解为整数部分和小数部分字符串的方法
+	String[] strIntArray =  divide(money);
+	char[] IntArray = strIntArray[0].toCharArray();
     
-    //判断金额整数部分不能超过
-      if (IntArray.length > 10)
-      {
-        System.out.print("输入金额不能超过仟亿.");
-      }
+        //判断金额整数部分不能超过
+	      if (IntArray.length > 10)
+	      {
+		System.out.print("输入金额不能超过仟亿.");
+	      }
 
-		char[] FloatArray = strIntArray[1].toCharArray();
-		/*
-			* 使用split时,如果输入的字符串没有"."会报错.
-			* 使用split以"."分割一个字符串,但是strIntArray数据长度为0.因为没有转义,\\放在需要转义的内容前面,表示转移.
-			* String[] 类型的数组,求数组长度length是没有"()"的.
-			* java.lang.ArrayIndexOutOfBoundsException : 索引为负数或大于或等于数组的大小。 
-			* 调用方法一定记得加"()".
+	char[] FloatArray = strIntArray[1].toCharArray();
 
-		*/
+	// 先后遍历整数数组
+	// 从整数数组中获取元素,并在ChineseNumber找到匹配的汉字写法
+	for(int i = 0; i < IntArray.length; i++ )
+	{
+		//比如获取100中1对应的汉字壹,通过 IntArray[i]数据类型转化为string,再将string转为int,因为int才能作为索引.
+		int num = Integer.parseInt(Character.toString(IntArray[i]));
+			//如果整数数组的最后一个num==0,则num不用获取对应的汉字,且不需要添加进stringbuffer数组.
+			//if (!(num == 0 && i == IntArray.length -1))
+			//{
+				// 定义数字对应汉字字符串变量
+				String HanZiInt = ChineseNumber[num];
+				HanZiIntAndUnit.append(HanZiInt);
+			//}
+		
+			// 定义数字对应汉字计数单位字符串变量
+			String HanZiUnitInt = null;
 
-	
-
-
-		//7,先后遍历整数数组和小数数组
-			//从整数数组中获取元素,并在ChineseNumber找到匹配的汉字写法
-			for(int i = 0; i < IntArray.length; i++ )
+			if (num != 0)
 			{
-				//获取100中1对应的汉字壹,通过 IntArray[i]数据类型转化为string,再将string转为int,因为int才能作为索引.
-				int num = Integer.parseInt(Character.toString(IntArray[i]));
-					//如果整数数组的最后一个num==0,则num不用获取对应的汉字,且不需要添加进stringbuffer数组.
-					//if (!(num == 0 && i == IntArray.length -1))
-					//{
-						String HanZiInt = ChineseNumber[num];
-						HanZiIntAndUnit.append(HanZiInt);
-					//}
-				
-
-				String HanZiUnitInt = null;
-					
-					if (num != 0)
-					{
-						//数组长度-1,获取计数单位对应的汉字书写方式.
-						HanZiUnitInt = CountingUnitInt[(IntArray.length-1) - i];
-						HanZiIntAndUnit.append(HanZiUnitInt);
-
-					}else{
-						HanZiUnitInt = "";
-						HanZiIntAndUnit.append(HanZiUnitInt);
-					}
-				
-			}
-			System.out.print(HanZiIntAndUnit);
-
-
-			//从小数数组中获取元素,并在CountingUnit,找到匹配的计数单位
-			for(int i = 0; i < FloatArray.length; i++ )
-			{
-				//获取.11中1对应的汉字壹,通过 IntArray[i]数据类型转化为string,再将string转为int,因为int才能作为索引.
-				int num = Integer.parseInt(Character.toString(FloatArray[i]));
-				String HanZiFloat = ChineseNumber[num];
-				HanZiFloatAndUnit.append(HanZiFloat);
-
 				//数组长度-1,获取计数单位对应的汉字书写方式.
-				String HanZiUnitFloat = CountingUnitFloat[i];
-				HanZiFloatAndUnit.append(HanZiUnitFloat);
-				
-			}
-			System.out.print(HanZiFloatAndUnit);
-			System.out.println();
-			System.out.println("--------------------");
+				HanZiUnitInt = CountingUnitInt[(IntArray.length-1) - i];
+				HanZiIntAndUnit.append(HanZiUnitInt);
 
-
-			// 排除多余的零
-			StringBuffer result = new StringBuffer(HanZiIntAndUnit);
-
-			// 排除多余的零方式一 : 避免再来一个if,所以可以for循环从最后一个元素开始.
-			for (int n = (result.length()-1); n >= 0 ; n--)
-			{
-				String str1 = Character.toString(result.charAt(n));
-				System.out.println("第" +n + "循环,str1为:" + str1);
-				System.out.println("第" +n + "循环后,索引为:" + n);
-				System.out.println("第" +n + "循环前,数组为:" + result);
-				String str2 =  n != 0 ? Character.toString(result.charAt(n - 1)) : str1;
-				String str3 = Character.toString(result.charAt(result.length()-1));
-
-				if ( (  str1.equals("零") &&  str1.equals(str2)  ) || str3.equals("零") )
-				{
-					//public StringBuffer insert(int offset, String str)将字符串插入到此字符序列中。
-					result.deleteCharAt(n);
-//					n++;
-					System.out.println("移除后数组长度 :" + result.length());
-
-				}
-				System.out.println("第" +n + "循环后,数组为:" + result);
+			}else{
+				HanZiUnitInt = "";
+				HanZiIntAndUnit.append(HanZiUnitInt);
 			}
 
-
-			// 排除多余的零方式二 :
-			for (int j = 1; j < result.length(); j++)
-			{
-				String str1 = Character.toString(result.charAt(j));
-				String str2 = Character.toString(result.charAt(j - 1));
-
-				if ((str1.equals("零") && str1.equals(str2)))
-				{
-					//public StringBuffer insert(int offset, String str)将字符串插入到此字符序列中。
-					result.delete(j,j+1);
-					j--;
-
-				}
-
-			}
-
-			String str3 = Character.toString(result.charAt(result.length()-1));
-
-			if (str3.equals("零"))
-			{
-				result.delete(result.length()-1,result.length());
-			}
+	}
+	System.out.print(HanZiIntAndUnit);
 
 
+	//从小数数组中获取元素,并在CountingUnit,找到匹配的计数单位
+	for(int i = 0; i < FloatArray.length; i++ )
+	{
+		//举例：获取100.11中小数点后‘1’对应的汉字壹,通过 IntArray[i]数据类型转化为string,再将string转为int,因为int才能作为索引.
+		int num = Integer.parseInt(Character.toString(FloatArray[i]));
+		String HanZiFloat = ChineseNumber[num];
+		HanZiFloatAndUnit.append(HanZiFloat);
+
+		//数组长度-1,获取计数单位对应的汉字书写方式.
+		String HanZiUnitFloat = CountingUnitFloat[i];
+		HanZiFloatAndUnit.append(HanZiUnitFloat);
+
+	}
+	System.out.print(HanZiFloatAndUnit);
+	
+	// 一些打印测试
+	System.out.println();
+	System.out.println("--------------------");
+
+
+	// 排除多余的零，主要是派出整数部分的零，所以定义一个可变string数组
+	StringBuffer result = new StringBuffer(HanZiIntAndUnit);
+
+	// 排除多余的零方式一 : 避免方式2中for循环之后再来一个if,所以for循环从最后一个元素倒叙遍历开始.
+	for (int n = (result.length()-1); n >= 0 ; n--)
+	{
+		String str1 = Character.toString(result.charAt(n));
 		
-			System.out.println();
-			System.out.println("========================");
-
-			System.out.print(result);
-			System.out.print(HanZiFloatAndUnit);
-
+		// 一些打印测试
+		System.out.println("第" +n + "循环,str1为:" + str1);
+		System.out.println("第" +n + "循环后,索引为:" + n);
+		System.out.println("第" +n + "循环前,数组为:" + result);
 		
-		
+		String str2 =  n != 0 ? Character.toString(result.charAt(n - 1)) : str1;
+		String str3 = Character.toString(result.charAt(result.length()-1));
+
+		if ( (  str1.equals("零") &&  str1.equals(str2)  ) || str3.equals("零") )
+		{
+			
+			result.deleteCharAt(n);
+			
+			// 一些打印测试
+			System.out.println("移除后数组长度 :" + result.length());
+
+		}
+		// 一些打印测试
+		System.out.println("第" +n + "循环后,数组为:" + result);
+	}
+
+/*
+	// 排除多余的零方式二 :
+	for (int j = 1; j < result.length(); j++)
+	{
+		String str1 = Character.toString(result.charAt(j));
+		String str2 = Character.toString(result.charAt(j - 1));
+
+		if ((str1.equals("零") && str1.equals(str2)))
+		{
+			//public StringBuffer insert(int offset, String str)将字符串插入到此字符序列中。
+			result.delete(j,j+1);
+			j--;
+
+		}
+
+	}
+
+	String str3 = Character.toString(result.charAt(result.length()-1));
+
+	if (str3.equals("零"))
+	{
+		result.delete(result.length()-1,result.length());
+	}
+
+*/
+	// 打印结果：	
+	System.out.println();
+	System.out.println("========================");
+
+	System.out.print(result);
+	System.out.print(HanZiFloatAndUnit);
+	
     }
 
 
